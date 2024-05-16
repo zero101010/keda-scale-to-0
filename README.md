@@ -1,0 +1,1 @@
+# keda-scale-to-0
