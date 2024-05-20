@@ -1,0 +1,16 @@
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: rancher
+spec:
+  hosts:
+    - localhost
+  pathPrefixes:
+    - /
+  targetPendingRequests: 200
+  scaleTargetRef:
+    name: rancher
+    kind: Deployment
+    apiVersion: apps/v1
+    service: rancher-service
+    port: 80
