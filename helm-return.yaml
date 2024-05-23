@@ -1,0 +1,140 @@
+---
+# Source: xkcd/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: xkcd
+  labels:
+    helm.sh/chart: xkcd-0.1.0
+    app.kubernetes.io/name: xkcd
+    app.kubernetes.io/instance: xkcd
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: xkcd/templates/externalservice.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: xkcd-proxy
+  labels:
+    helm.sh/chart: xkcd-0.1.0
+    app.kubernetes.io/name: xkcd
+    app.kubernetes.io/instance: xkcd
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ExternalName
+  externalName: keda-http-add-on-interceptor-proxy.keda
+---
+# Source: xkcd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: xkcd
+  labels:
+    helm.sh/chart: xkcd-0.1.0
+    app.kubernetes.io/name: xkcd
+    app.kubernetes.io/instance: xkcd
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: xkcd
+    app.kubernetes.io/instance: xkcd
+---
+# Source: xkcd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xkcd
+  labels:
+    helm.sh/chart: xkcd-0.1.0
+    app.kubernetes.io/name: xkcd
+    app.kubernetes.io/instance: xkcd
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: xkcd
+      app.kubernetes.io/instance: xkcd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: xkcd
+        app.kubernetes.io/instance: xkcd
+    spec:
+      serviceAccountName: xkcd
+      securityContext:
+        {}
+      containers:
+        - name: xkcd
+          securityContext:
+            {}
+          image: "registry.k8s.io/e2e-test-images/agnhost:2.45"
+          imagePullPolicy: Always
+          args:
+              - netexec
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+# Source: xkcd/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xkcd
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: xkcd-proxy
+            port:
+              number: 8080
+
+---
+# Source: xkcd/templates/httpscaledobject.yaml
+kind: HTTPScaledObject
+apiVersion: http.keda.sh/v1alpha1
+metadata:
+    name: xkcd
+spec:
+    hosts:
+        - localhost
+        - localhost
+    pathPrefixes:
+        - /path1
+        - /path2
+    targetPendingRequests: 200
+    scaleTargetRef:
+        name: xkcd
+        kind: Deployment
+        apiVersion: apps/v1
+        service: xkcd
+        port: 8080
+    replicas:
+        min: 0
+        max: 10

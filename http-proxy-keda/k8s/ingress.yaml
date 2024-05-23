@@ -1,17 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rancher
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: $1
+ name: nginx
+ namespace: keda # <-- namespace where the Add-On is installed
 spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: rancher-service
-            port:
-              number: 80
+ ingressClassName: nginx
+ rules:
+ - host: myhost.com
+   http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: keda-add-ons-http-interceptor-proxy # <-- interceptor service
+           port:
+             number: 8080

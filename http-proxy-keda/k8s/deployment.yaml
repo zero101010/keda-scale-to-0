@@ -1,23 +1,23 @@
 apiVersion: apps/v1 ## Versão da api
 kind: Deployment ## tipo de serviço
 metadata: ## dadps referentes ao deployment como nome
-  name: rancher
+  name: nginx
   labels:
-    app: rancher
+    app: nginx
 spec: ## especificações do deployment, principalmente o selector que vai selecionar qual pod vai acoplar
   # replicas: 2
   selector:
     matchLabels: ## Qual pod vai ser selecionado que possue o mesmo app
-      app: rancher
+      app: nginx
   ## estrutura do pod
   template:
     metadata:
       labels:
-        app: rancher ## Nome do pod
+        app: nginx ## Nome do pod
     spec:
       containers:
-      - name: rancher ## nome do container
-        image: rancher/hello-world # imagem
+      - name: nginx ## nome do container
+        image: nginx # imagem
         resources:
           limits:
             memory: "128Mi"
