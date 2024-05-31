@@ -1,0 +1,17 @@
+# apiVersion: http.keda.sh/v1alpha1
+# kind: HTTPScaledObject
+# metadata:
+#   name: go-grpc-category
+# spec:
+#   hosts:
+#     - lc-igor.ngrok.io
+#   targetPendingRequests: 200
+#   scaleTargetRef:
+#     name: go-grpc-category
+#     kind: Deployment
+#     apiVersion: apps/v1
+#     service: go-grpc-category
+#     port: 80
+#   replicas:
+#     min: 0
+#     max: 5
