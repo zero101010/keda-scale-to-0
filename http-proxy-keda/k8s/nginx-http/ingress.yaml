@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
- name: nginx
- namespace: keda # <-- namespace where the Add-On is installed
+  name: nginx
+  namespace: default
 spec:
  ingressClassName: nginx
  rules:
@@ -13,6 +13,6 @@ spec:
        pathType: Prefix
        backend:
          service:
-           name: keda-add-ons-http-interceptor-proxy # <-- interceptor service
+           name: keda-add-ons # <-- interceptor service
            port:
              number: 8080

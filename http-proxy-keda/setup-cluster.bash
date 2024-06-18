@@ -12,13 +12,4 @@ helm repo update
 helm install keda kedacore/keda --namespace keda --create-namespace
 helm install http-add-on kedacore/keda-add-ons-http --namespace keda
 
-# ### Ngrok 
-# helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
-
-  
-# # ## Aplication
-# # kubectl apply -f k8s/
-
-# grpcurl -plaintext -H "Host: grpc.example.com" lc-igor.ngrok.io:80 list
-
 

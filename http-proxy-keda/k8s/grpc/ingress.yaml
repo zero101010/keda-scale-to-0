@@ -16,4 +16,4 @@ spec:
           service:
             name: go-grpc-category
             port:
-              number: 8080
+              number: 50051

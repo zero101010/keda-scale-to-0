@@ -1,11 +1,11 @@
-http requests 
-statuful sets scale to 0
+
+statuful sets scale to 0 no
 helm chart updates 
 Lifecycle code updates to Lifecycle static env
-How use ScaleObject in public helm chats
+How use ScaleObject in public helm chats how use this in databases for example
 How to install keda in our cluster with argo Rian or Mario
 Update lifecycle new version to scale 0 and what paramets we will open to be configured based in Keda documentation
-GRPC services thats proxy works for us
+GRPC services thats proxy works for us dind't work
 
 
 "
